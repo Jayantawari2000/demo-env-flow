@@ -1,42 +1,53 @@
-name: Deploy Based on Environment
+name: CI-CD Multi Environment
 
 on:
   push:
     branches:
       - dev
       - qa
+      - main
+  pull_request:
+    branches:
+      - qa
+      - main
+  workflow_dispatch:
 
 jobs:
-  deploy:
+  build-deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install jq
         run: sudo apt-get install -y jq
 
+      # 🔹 Detect Environment Based on Branch
       - name: Detect Environment
         run: |
-          if [[ "${GITHUB_REF##*/}" == "dev" ]]; then
+          BRANCH_NAME=${GITHUB_REF##*/}
+
+          if [[ "$BRANCH_NAME" == "dev" ]]; then
             echo "ENV=dev" >> $GITHUB_ENV
-          elif [[ "${GITHUB_REF##*/}" == "qa" ]]; then
+          elif [[ "$BRANCH_NAME" == "qa" ]]; then
             echo "ENV=qa" >> $GITHUB_ENV
+          elif [[ "$BRANCH_NAME" == "main" ]]; then
+            echo "ENV=prod" >> $GITHUB_ENV
           fi
 
-      - name: Read Credentials from JSON
+      # 🔹 Read Config from JSON
+      - name: Read Config from JSON
         run: |
           USERNAME=$(jq -r .${ENV}.username config/env-config.json)
-          PASSWORD=$(jq -r .${ENV}.password config/env-config.json)
           URL=$(jq -r .${ENV}.url config/env-config.json)
 
           echo "USERNAME=$USERNAME" >> $GITHUB_ENV
-          echo "PASSWORD=$PASSWORD" >> $GITHUB_ENV
           echo "URL=$URL" >> $GITHUB_ENV
 
-      - name: Deploy
+      # 🔹 Example Deployment Step
+      - name: Deploy Application
         run: |
-          echo "Deploying to $ENV"
-          echo "Using $USERNAME"
+          echo "Deploying to $ENV environment"
+          echo "Using username: $USERNAME"
           echo "Target URL: $URL"
