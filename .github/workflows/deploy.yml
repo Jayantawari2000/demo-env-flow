@@ -1,0 +1,42 @@
+name: Deploy Based on Environment
+
+on:
+  push:
+    branches:
+      - dev
+      - qa
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: Detect Environment
+        run: |
+          if [[ "${GITHUB_REF##*/}" == "dev" ]]; then
+            echo "ENV=dev" >> $GITHUB_ENV
+          elif [[ "${GITHUB_REF##*/}" == "qa" ]]; then
+            echo "ENV=qa" >> $GITHUB_ENV
+          fi
+
+      - name: Read Credentials from JSON
+        run: |
+          USERNAME=$(jq -r .${ENV}.username config/env-config.json)
+          PASSWORD=$(jq -r .${ENV}.password config/env-config.json)
+          URL=$(jq -r .${ENV}.url config/env-config.json)
+
+          echo "USERNAME=$USERNAME" >> $GITHUB_ENV
+          echo "PASSWORD=$PASSWORD" >> $GITHUB_ENV
+          echo "URL=$URL" >> $GITHUB_ENV
+
+      - name: Deploy
+        run: |
+          echo "Deploying to $ENV"
+          echo "Using $USERNAME"
+          echo "Target URL: $URL"
