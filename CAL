@@ -1,14 +1,62 @@
-class Calculator:
-    def add(self, a: float, b: float) -> float:
-        return a + b
+from calculator import Calculator
  
-    def subtract(self, a: float, b: float) -> float:
-        return a - b
+def get_number(prompt: str) -> float:
+
+    while True:
+
+        try:
+
+            return float(input(prompt))
+
+        except ValueError:
+
+            print("Invalid input. Please enter a number.")
  
-    def multiply(self, a: float, b: float) -> float:
-        return a * b
+def main():
+
+    calc = Calculator()
  
-    def divide(self, a: float, b: float) -> float:
-        if b == 0:
-            raise ValueError("Cannot divide by zero.")
-        return a / b
+    print("=== Advanced Python Calculator ===")
+
+    print("Operations: +  -  *  /")
+ 
+    a = get_number("Enter first number: ")
+
+    b = get_number("Enter second number: ")
+
+    operation = input("Choose operation (+, -, *, /): ")
+ 
+    try:
+
+        if operation == "+":
+
+            result = calc.add(a, b)
+
+        elif operation == "-":
+
+            result = calc.subtract(a, b)
+
+        elif operation == "*":
+
+            result = calc.multiply(a, b)
+
+        elif operation == "/":
+
+            result = calc.divide(a, b)
+
+        else:
+
+            print("Invalid operation selected.")
+
+            return
+ 
+        print(f"Result: {result}")
+ 
+    except ValueError as e:
+
+        print(f"Error: {e}")
+ 
+if __name__ == "__main__":
+
+    main()
+ 
