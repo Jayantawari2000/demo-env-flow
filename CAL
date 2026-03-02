@@ -1,62 +1,54 @@
-from calculator import Calculator
+class Calculator:
+
+    def __init__(self):
+
+        self.history = []
  
-def get_number(prompt: str) -> float:
-
-    while True:
-
-        try:
-
-            return float(input(prompt))
-
-        except ValueError:
-
-            print("Invalid input. Please enter a number.")
- 
-def main():
-
-    calc = Calculator()
- 
-    print("=== Advanced Python Calculator ===")
-
-    print("Operations: +  -  *  /")
- 
-    a = get_number("Enter first number: ")
-
-    b = get_number("Enter second number: ")
-
-    operation = input("Choose operation (+, -, *, /): ")
- 
-    try:
+    def calculate(self, a: float, b: float, operation: str) -> float:
 
         if operation == "+":
 
-            result = calc.add(a, b)
+            result = a + b
 
         elif operation == "-":
 
-            result = calc.subtract(a, b)
+            result = a - b
 
         elif operation == "*":
 
-            result = calc.multiply(a, b)
+            result = a * b
 
         elif operation == "/":
 
-            result = calc.divide(a, b)
+            if b == 0:
+
+                raise ValueError("Cannot divide by zero.")
+
+            result = a / b
 
         else:
 
-            print("Invalid operation selected.")
-
-            return
+            raise ValueError("Invalid operation.")
  
-        print(f"Result: {result}")
- 
-    except ValueError as e:
+        # Save to history
 
-        print(f"Error: {e}")
- 
-if __name__ == "__main__":
+        self.history.append(f"{a} {operation} {b} = {result}")
 
-    main()
+        return result
+ 
+    def show_history(self):
+
+        if not self.history:
+
+            print("No calculations yet.")
+
+        else:
+
+            print("\n--- Calculation History ---")
+
+            for item in self.history:
+
+                print(item)
+
+            print("---------------------------")
  
