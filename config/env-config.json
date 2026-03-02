@@ -1,1 +1,12 @@
-
+{
+  "dev": {
+    "username": "dev_user",
+    "password": "dev_dummy_pass",
+    "url": "https://dev.example.com"
+  },
+  "qa": {
+    "username": "qa_user",
+    "password": "qa_dummy_pass",
+    "url": "https://qa.example.com"
+  }
+}
